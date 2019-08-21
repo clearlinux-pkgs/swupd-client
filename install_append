@@ -1,5 +1,7 @@
 mkdir -p %{buildroot}/usr/share/defaults/etc/profile.d/
 install -m644 swupd.bash %{buildroot}/usr/share/defaults/etc/profile.d/50-swupd.bash
+mkdir -p %{buildroot}/usr/share/zsh/site-functions/
+install -m644 swupd.zsh %{buildroot}/usr/share/zsh/site-functions/_swupd
 mkdir -p %{buildroot}/usr/share/defaults/swupd/
 install -m644 config %{buildroot}/usr/share/defaults/swupd/config
 mkdir -p %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/
