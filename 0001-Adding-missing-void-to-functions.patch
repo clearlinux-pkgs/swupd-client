@@ -1,0 +1,32 @@
+From 956599df9e7a4049355fb84ce75501bb85c168ae Mon Sep 17 00:00:00 2001
+From: Castulo Martinez <castulo.martinez@intel.com>
+Date: Wed, 21 Aug 2019 14:06:14 -0700
+Subject: [PATCH] Adding missing void to functions
+
+Signed-off-by: Castulo Martinez <castulo.martinez@intel.com>
+---
+ src/globals.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/globals.c b/src/globals.c
+index adfb63b..2a3e5db 100644
+--- a/src/globals.c
++++ b/src/globals.c
+@@ -234,12 +234,12 @@ bool set_state_dir_cache(char *path)
+ 	return true;
+ }
+ 
+-static void set_default_state_dir()
++static void set_default_state_dir(void)
+ {
+ 	string_or_die(&globals.state_dir, "%s", STATE_DIR);
+ }
+ 
+-static void set_default_state_dir_cache()
++static void set_default_state_dir_cache(void)
+ {
+ 	globals.state_dir_cache = NULL;
+ }
+-- 
+2.22.1
+

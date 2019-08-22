@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 3.22.2
-Release  : 321
+Release  : 322
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v3.22.2/swupd-client-3.22.2.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v3.22.2/swupd-client-3.22.2.tar.gz
 Source1  : swupd-cleanup.service
@@ -30,6 +30,7 @@ BuildRequires : pkgconfig(zlib)
 BuildRequires : systemd-dev
 Patch1: 0001-Add-polkit-files.patch
 Patch2: always-run-ldconfig.patch
+Patch3: 0001-Adding-missing-void-to-functions.patch
 
 %description
 The swupd-client package provides a reference implementation of a software
@@ -93,13 +94,14 @@ services components for the swupd-client package.
 %setup -q -n swupd-client-3.22.2
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1566426030
+export SOURCE_DATE_EPOCH=1566509797
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -126,7 +128,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1566426030
+export SOURCE_DATE_EPOCH=1566509797
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp COPYING %{buildroot}/usr/share/package-licenses/swupd-client/COPYING
