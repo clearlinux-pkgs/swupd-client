@@ -1,0 +1,203 @@
+From ab60de873a624bff892bee31a087d1f9b63a5bfb Mon Sep 17 00:00:00 2001
+From: Otavio Pontes <otavio.pontes@intel.com>
+Date: Wed, 23 Oct 2019 15:27:43 -0700
+Subject: [PATCH] Revert "version: Turn on partially the latest signature
+ check"
+
+This reverts commit ae9e8ce34456378762e3d74fe807d549003d80a6.
+---
+ src/check_update.c                            |  4 +--
+ src/mirror.c                                  |  2 +-
+ src/swupd_exit_codes.h                        | 10 ------
+ src/version.c                                 | 35 ++++++++-----------
+ .../signature/version-sig-check.bats          |  4 +--
+ 5 files changed, 19 insertions(+), 36 deletions(-)
+
+diff --git a/src/check_update.c b/src/check_update.c
+index 77b049d4..7efdf3f9 100644
+--- a/src/check_update.c
++++ b/src/check_update.c
+@@ -68,7 +68,7 @@ enum swupd_code check_update()
+ 		ret = SWUPD_CURRENT_VERSION_UNKNOWN;
+ 	}
+ 
+-	if (server_version == -SWUPD_ERROR_SIGNATURE_VERIFICATION) {
++	if (server_version == -SWUPD_SIGNATURE_VERIFICATION_FAILED) {
+ 		ret = SWUPD_SIGNATURE_VERIFICATION_FAILED;
+ 		error("Unable to determine the server version as signature verification failed\n");
+ 	} else if (server_version < 0) {
+@@ -83,7 +83,7 @@ enum swupd_code check_update()
+ 		/* Retrieve current format */
+ 		current_format = get_current_format();
+ 		latest_version_in_format = get_latest_version(NULL);
+-		if (latest_version_in_format == -SWUPD_ERROR_SIGNATURE_VERIFICATION) {
++		if (latest_version_in_format == -SWUPD_SIGNATURE_VERIFICATION_FAILED) {
+ 			ret = SWUPD_SIGNATURE_VERIFICATION_FAILED;
+ 			error("Unable to determine the latest version in format as signature verification failed\n");
+ 		} else if (latest_version_in_format < 0) {
+diff --git a/src/mirror.c b/src/mirror.c
+index 972cb4f5..ac9236f3 100644
+--- a/src/mirror.c
++++ b/src/mirror.c
+@@ -300,7 +300,7 @@ int handle_mirror_if_stale(void)
+ 	 * with the server earlier. Another possible explanation for this if the signature
+ 	 * for central_version dont verify
+ 	 */
+-	if (central_version == -SWUPD_ERROR_SIGNATURE_VERIFICATION) {
++	if (central_version == -SWUPD_SIGNATURE_VERIFICATION_FAILED) {
+ 		warn("Cannot determine upstream version since signature verification for path: %s failed\n", ret_str);
+ 		warn("Unable to determine if the mirror is up to date\n");
+ 		goto out;
+diff --git a/src/swupd_exit_codes.h b/src/swupd_exit_codes.h
+index 857a4b9c..019a2286 100644
+--- a/src/swupd_exit_codes.h
++++ b/src/swupd_exit_codes.h
+@@ -50,14 +50,4 @@ enum swupd_code {
+ 
+ };
+ 
+-/*
+- * Swupd specific errno codes.
+- * Functions that return int for error in swupd should always use a negative
+- * number for errors, ideally from errno table. If there's no standard errno
+- * code that is similar to what you are trying to return, add the constant
+- * here and use it. Don't use values from enum swupd_code because they will
+- * clash with errno codes.
+- */
+-#define SWUPD_ERROR_SIGNATURE_VERIFICATION 126
+-
+ #endif
+diff --git a/src/version.c b/src/version.c
+index 554d3cb5..05082af8 100644
+--- a/src/version.c
++++ b/src/version.c
+@@ -92,8 +92,8 @@ static int get_sig_inmemory(char *url, struct curl_file_data *tmp_version_sig)
+ 	string_or_die(&sig_fname, "%s.sig", url);
+ 	ret = swupd_curl_query_content_size(sig_fname);
+ 	if (ret <= 0) {
+-		warn("Failed to retrieve size for signature file: %s\n", sig_fname);
+-		ret = -ENOENT;
++		error("Failed to retrieve size for signature file: %s\n", sig_fname);
++		ret = -SWUPD_SIGNATURE_VERIFICATION_FAILED;
+ 		goto exit;
+ 	}
+ 
+@@ -104,10 +104,10 @@ static int get_sig_inmemory(char *url, struct curl_file_data *tmp_version_sig)
+ 
+ 	ret = swupd_curl_get_file_memory(sig_fname, tmp_version_sig);
+ 	if (ret != 0) {
+-		warn("Failed to fetch signature file in memory: %s\n", sig_fname);
++		error("Failed to fetch signature file in memory: %s\n", sig_fname);
+ 		free_string(&tmp_version_sig->data);
+ 		tmp_version_sig->data = NULL;
+-		ret = -ENOENT;
++		ret = -SWUPD_SIGNATURE_VERIFICATION_FAILED;
+ 		goto exit;
+ 	}
+ 
+@@ -116,7 +116,7 @@ exit:
+ 	return ret;
+ }
+ 
+-static int verify_signature(char *url, struct curl_file_data *tmp_version)
++static bool verify_signature(char *url, struct curl_file_data *tmp_version)
+ {
+ 	int ret;
+ 
+@@ -127,10 +127,8 @@ static int verify_signature(char *url, struct curl_file_data *tmp_version)
+ 	};
+ 
+ 	ret = get_sig_inmemory(url, &tmp_version_sig);
++
+ 	if (ret < 0) {
+-		//TODO: enforce sigcheck on format bump
+-		// For now consider any download error as ENOENT to prevent sig check
+-		ret = -ENOENT;
+ 		goto out;
+ 	}
+ 
+@@ -139,11 +137,11 @@ static int verify_signature(char *url, struct curl_file_data *tmp_version)
+ 				    (const unsigned char *)tmp_version_sig.data,
+ 				    tmp_version_sig.len, true)
+ 		  ? 0
+-		  : -SWUPD_ERROR_SIGNATURE_VERIFICATION;
++		  : -SWUPD_SIGNATURE_VERIFICATION_FAILED;
+ 	free_string(&tmp_version_sig.data);
+ 
+ out:
+-	return ret;
++	return (ret == 0) ? true : false;
+ }
+ 
+ static int get_version_from_url(char *url)
+@@ -152,7 +150,7 @@ static int get_version_from_url(char *url)
+ 	int ret = 0;
+ 	int err = 0;
+ 	char version_str[MAX_VERSION_STR_SIZE];
+-	int sig_verified = 0;
++	bool sig_verified = false;
+ 
+ 	/* struct for version data */
+ 	struct curl_file_data tmp_version = {
+@@ -173,23 +171,18 @@ static int get_version_from_url(char *url)
+ 	}
+ 
+ 	/* Sig check */
++	//TODO: enforce sigcheck on format bump
+ 	if (globals.sigcheck) {
+ 		sig_verified = verify_signature(url, &tmp_version);
+ 	} else {
+-		error("FAILED TO VERIFY SIGNATURE OF %s. Operation proceeding due to \n"
++		debug("FAILED TO VERIFY SIGNATURE OF %s. Operation proceeding due to \n"
+ 		      " --nosigcheck, but system security may be compromised\n",
+ 		      url);
+ 		journal_log_error("swupd security notice:  --nosigcheck used to bypass version signature");
+-		sig_verified = 0;
+ 	}
+ 
+-	if (sig_verified == -ENOENT) {
+-		//TODO: enforce sigcheck on format bump
+-		warn("Signature for latest file (%s) is missing\n", url);
+-		warn("Support for unsigned latest file will be deprecated soon\n");
+-	} else if (sig_verified != 0) {
+-		error("Signature Verification failed for URL: %s\n", url);
+-		return -SWUPD_ERROR_SIGNATURE_VERIFICATION;
++	if (globals.sigcheck && !sig_verified) {
++		debug("Signature Verification failed for URL: %s\n", url);
+ 	}
+ 
+ 	return ret;
+@@ -341,7 +334,7 @@ enum swupd_code read_versions(int *current_version, int *server_version, char *p
+ 		error("Unable to determine current OS version\n");
+ 		return SWUPD_CURRENT_VERSION_UNKNOWN;
+ 	}
+-	if (*server_version == -SWUPD_ERROR_SIGNATURE_VERIFICATION) {
++	if (*server_version == -SWUPD_SIGNATURE_VERIFICATION_FAILED) {
+ 		error("Unable to determine the server version as signature verification failed\n");
+ 		return SWUPD_SIGNATURE_VERIFICATION_FAILED;
+ 	} else if (*server_version < 0) {
+diff --git a/test/functional/signature/version-sig-check.bats b/test/functional/signature/version-sig-check.bats
+index 6bf0a56a..705f9683 100755
+--- a/test/functional/signature/version-sig-check.bats
++++ b/test/functional/signature/version-sig-check.bats
+@@ -7,6 +7,8 @@ load "../testlib"
+ 
+ test_setup() {
+ 
++	#TODO: Remove on FB 30
++	skip "Skipping until FB 30 - feature disabled"
+ 	create_test_environment "$TEST_NAME"
+ 	create_bundle -L -n test-bundle1 -f /file_1 "$TEST_NAME"
+ 	create_version -p "$TEST_NAME" 20 10
+@@ -16,8 +18,6 @@ test_setup() {
+ 
+ @test "SIG019: Verify signature for absolute latest version with swupd check-update" {
+ 
+-	#TODO: Remove on FB 30
+-	skip "Skipping until FB 30 - feature disabled"
+ 	# absolute latest version get checked during check-update
+ 	sudo sh -c "mv $WEBDIR/version/latest_version.sig $WEBDIR/version/latest_version_bad_name.sig"
+ 	run sudo sh -c "$SWUPD check-update $SWUPD_OPTS"
+-- 
+2.23.0
+

@@ -1,2 +1,3 @@
 0001-Add-polkit-files.patch
 always-run-ldconfig.patch
+0001-Revert-version-Turn-on-partially-the-latest-signatur.patch
