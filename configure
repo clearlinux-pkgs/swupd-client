@@ -6,3 +6,4 @@
 --with-fallback-capaths=/usr/share/ca-certs/.prebuilt-store/anchors
 --with-post-update=/usr/bin/update-helper
 --with-build-number=%{release}
+--enable-third-party
