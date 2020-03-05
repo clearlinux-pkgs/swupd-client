@@ -1,4 +1,1 @@
 0001-Add-polkit-files.patch
-always-run-ldconfig.patch
-0001-Revert-version-Turn-on-partially-the-latest-signatur.patch
-0001-os_install-Skip-optional-bundles-when-flag-set.patch
