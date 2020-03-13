@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 3.24.1
-Release  : 330
+Release  : 331
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v3.24.1/swupd-client-3.24.1.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v3.24.1/swupd-client-3.24.1.tar.gz
 Source1  : swupd-cleanup.service
@@ -105,7 +105,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1583702327
+export SOURCE_DATE_EPOCH=1584119644
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -133,7 +133,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1583702327
+export SOURCE_DATE_EPOCH=1584119644
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-3.24.1/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f
@@ -190,8 +190,6 @@ install -m644 data/org.clearlinux.swupd.rules %{buildroot}/usr/share/polkit-1/ru
 %files man
 %defattr(0644,root,root,0755)
 /usr/share/man/man1/swupd.1
-/usr/share/man/man4/check-update.service.4
-/usr/share/man/man4/check-update.timer.4
 /usr/share/man/man4/swupd-update.service.4
 /usr/share/man/man4/swupd-update.timer.4
 /usr/share/man/man4/update-triggers.target.4
