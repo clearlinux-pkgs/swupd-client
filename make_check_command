@@ -1,0 +1,27 @@
+./swupd -v | grep '+SIGVERIFY'
+./swupd -v | grep '+STATELESS'
+./swupd -v | grep '+THIRDPARTY'
+
+VAR=$(./swupd -v | grep "^state directory" | awk '{ print $3 }')
+[[ "$VAR" == "/var/lib/swupd" ]]
+
+VAR=$(./swupd -v | grep "^certificate path" | awk '{ print $3 }')
+[[ "$VAR" == "/usr/share/clear/update-ca/Swupd_Root.pem" ]]
+
+VAR=$(./swupd -v | grep "^fallback certificate path" | awk '{ print $4 }')
+[[ "$VAR" == "/usr/share/ca-certs/.prebuilt-store/anchors" ]]
+
+VAR=$(./swupd -v | grep "^systemd unitdir" | awk '{ print $3 }')
+[[ "$VAR" == "/usr/lib/systemd/system" ]]
+
+VAR=$(./swupd -v | grep "^content URL" | awk '{ print $3 }')
+[[ "$VAR" == "https://cdn.download.clearlinux.org/update/" ]]
+
+VAR=$(./swupd -v | grep "^version URL" | awk '{ print $3 }')
+[[ "$VAR" == "https://cdn.download.clearlinux.org/update/" ]]
+
+VAR=$(./swupd -v | grep "^post-update hook" | awk '{ print $3 }')
+[[ "$VAR" == "/usr/bin/update-helper" ]]
+
+VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
+[[ "$VAR" == "30" ]]
