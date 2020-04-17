@@ -1,5 +1,5 @@
 PKG_NAME := swupd-client
-URL = https://github.com/clearlinux/swupd-client/releases/download/v3.24.5/swupd-client-3.24.5.tar.gz
+URL = https://github.com/clearlinux/swupd-client/releases/download/v4.0.0/swupd-client-4.0.0.tar.gz
 ARCHIVES = 
 
 include ../common/Makefile.common
