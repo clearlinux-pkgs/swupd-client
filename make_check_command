@@ -1,6 +1,8 @@
 ./swupd -v | grep '+SIGVERIFY'
 ./swupd -v | grep '+STATELESS'
 ./swupd -v | grep '+THIRDPARTY'
+./swupd -v | grep '\-DEBUG_MODE'
+./swupd -v | grep '\-FORCE_TARTAR'
 
 VAR=$(./swupd -v | grep "^state directory" | awk '{ print $3 }')
 [[ "$VAR" == "/var/lib/swupd" ]]
