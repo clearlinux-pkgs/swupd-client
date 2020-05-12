@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 4.1.0
-Release  : 337
+Release  : 338
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v4.1.0/swupd-client-4.1.0.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v4.1.0/swupd-client-4.1.0.tar.gz
 Source1  : swupd-cleanup.service
@@ -29,6 +29,7 @@ BuildRequires : pkgconfig(liblzma)
 BuildRequires : pkgconfig(zlib)
 BuildRequires : systemd-dev
 Patch1: 0001-Add-polkit-files.patch
+Patch2: 0001-config-CONFIG_FILE_PATH-shouldn-t-be-treated-as-a-pa.patch
 
 %description
 The swupd-client package provides a reference implementation of a software
@@ -92,13 +93,14 @@ services components for the swupd-client package.
 %setup -q -n swupd-client-4.1.0
 cd %{_builddir}/swupd-client-4.1.0
 %patch1 -p1
+%patch2 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1588353163
+export SOURCE_DATE_EPOCH=1589299063
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -126,6 +128,8 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 ./swupd -v | grep '+SIGVERIFY'
 ./swupd -v | grep '+STATELESS'
 ./swupd -v | grep '+THIRDPARTY'
+./swupd -v | grep '\-DEBUG_MODE'
+./swupd -v | grep '\-FORCE_TARTAR'
 
 VAR=$(./swupd -v | grep "^state directory" | awk '{ print $3 }')
 [[ "$VAR" == "/var/lib/swupd" ]]
@@ -152,7 +156,7 @@ VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
 [[ "$VAR" == "30" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1588353163
+export SOURCE_DATE_EPOCH=1589299063
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-4.1.0/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f
