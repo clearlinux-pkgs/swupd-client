@@ -1,0 +1,30 @@
+From: Mark D Horn <mark.d.horn@intel.com>
+Date: Tue, 10 Nov 2020 10:55:30 -0800
+Subject: [PATCH] Fixed typo in man page.
+
+Fixes: https://github.com/clearlinux/distribution/issues/2189
+
+This is a hack of the source patch as the release content
+has been processed by rst2man.
+---
+
+--- a/docs/swupd.1.orig	2020-05-21 10:21:31.000000000 -0700
++++ b/docs/swupd.1	2020-11-11 15:23:34.703876402 -0800
+@@ -488,7 +488,7 @@
+ Also list files which should not exist. Only files listed in the
+ manifests should exist. By default swupd only looks for these
+ files at \fB/usr\fP, this path can be changed using \fB\-\-picky\-tree\fP\&.
+-Some paths at \fB\eusr\fP are skipped by default:
++Some paths at \fB/usr\fP are skipped by default:
+ \fB/usr/lib/modules\fP, \fB/usr/lib/kernel\fP, \fB/usr/local\fP
+ and \fB/usr/src\fP\&. These paths can be changed using
+ \fB\-\-picky\-whitelist\fP\&.
+@@ -585,7 +585,7 @@
+ Also removes files which should not exist. Only files listed
+ in the manifests should exist. By default swupd only looks for these
+ files at \fB/usr\fP, this path can be changed using \fB\-\-picky\-tree\fP\&.
+-Some paths at \fB\eusr\fP are skipped by default:
++Some paths at \fB/usr\fP are skipped by default:
+ \fB/usr/lib/modules\fP, \fB/usr/lib/kernel\fP, \fB/usr/local\fP
+ and \fB/usr/src\fP\&. These paths can be changed using
+ \fB\-\-picky\-whitelist\fP\&.
