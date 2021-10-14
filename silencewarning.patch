@@ -1,0 +1,24 @@
+with our new avx2 approach, these warnings are expected and not a problem so silcense them
+
+--- swupd-client-4.2.1/src/swupd_lib/delta.c~	2020-05-15 19:25:25.000000000 +0000
++++ swupd-client-4.2.1/src/swupd_lib/delta.c	2021-10-14 13:09:20.772888180 +0000
+@@ -167,7 +167,7 @@
+ 
+ 			if (!compute_hash_from_file(filename, hash) || !hash_equal(file->hash, hash)) {
+ 				FREE(filename);
+-				warn("File \"%s\" is missing or corrupted\n", file->filename);
++//				warn("File \"%s\" is missing or corrupted\n", file->filename);
+ 				continue;
+ 			}
+ 
+@@ -175,8 +175,8 @@
+ 		}
+ 
+ 		if (!found) {
+-			warn("Couldn't use delta file because original file is corrupted or missing\n");
+-			info("Consider running \"swupd repair\" to fix the issue\n");
++//			warn("Couldn't use delta file because original file is corrupted or missing\n");
++//			info("Consider running \"swupd repair\" to fix the issue\n");
+ 			goto next;
+ 		}
+ 
