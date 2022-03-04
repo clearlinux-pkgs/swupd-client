@@ -1,0 +1,17 @@
+--- swupd-client-4.2.1/src/swupd_lib/curl.c~	2020-05-21 17:07:11.000000000 +0000
++++ swupd-client-4.2.1/src/swupd_lib/curl.c	2022-03-04 01:18:51.473589437 +0000
+@@ -756,12 +756,12 @@
+ 	if (curl_ret != CURLE_OK) {
+ 		goto exit;
+ 	}
+-
++#if 0
+ 	curl_ret = curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
+ 	if (curl_ret != CURLE_OK && curl_ret != CURLE_UNSUPPORTED_PROTOCOL) {
+ 		goto exit;
+ 	}
+-
++#endif
+ 	//TODO: Introduce code back on bug is fixed on curl
+ 	//curl_ret = curl_easy_setopt(curl, CURLOPT_PIPEWAIT, 1);
+ 	//if (curl_ret != CURLE_OK && curl_ret != CURLE_UNKNOWN_OPTION) {
