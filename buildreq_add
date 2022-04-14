@@ -2,4 +2,4 @@
 # picked up automatically. One name per line, no whitespace.
 bzip2-dev
 systemd-dev
-docutils
+pypi-docutils
