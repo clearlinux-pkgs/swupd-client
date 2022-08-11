@@ -1,0 +1,11 @@
+--- swupd-client-4.2.1/src/swupd_lib/fullfile.c~	2020-05-21 17:07:11.000000000 +0000
++++ swupd-client-4.2.1/src/swupd_lib/fullfile.c	2022-08-11 17:36:41.324748666 +0000
+@@ -204,7 +204,7 @@
+ 	}
+ 
+ 	/* download loop */
+-	info("Starting download of remaining update content. This may take a while...\n");
++	info("Starting download of remaining update content. This may take a while (%i files)...\n", list_length);
+ 
+ 	for (iter = list_head(need_download); iter; iter = iter->next) {
+ 		file = iter->data;

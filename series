@@ -3,3 +3,4 @@
 silencewarning.patch
 notelemetry.patch
 nohttpd.patch
+moreinfo.patch

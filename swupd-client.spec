@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 4.2.1
-Release  : 347
+Release  : 348
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source1  : swupd-cleanup.service
@@ -33,6 +33,7 @@ Patch2: 0001-Fixed-typo-in-man-page.patch
 Patch3: silencewarning.patch
 Patch4: notelemetry.patch
 Patch5: nohttpd.patch
+Patch6: moreinfo.patch
 
 %description
 The swupd-client package provides a reference implementation of a software
@@ -100,21 +101,22 @@ cd %{_builddir}/swupd-client-4.2.1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1649965962
+export SOURCE_DATE_EPOCH=1660239488
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
-export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
-export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
-export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
+export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
 %configure --disable-static --disable-tests \
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
@@ -162,10 +164,10 @@ VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
 [[ "$VAR" == "30" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1649965962
+export SOURCE_DATE_EPOCH=1660239488
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
-cp %{_builddir}/swupd-client-4.2.1/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f
+cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f
 %make_install
 mkdir -p %{buildroot}/usr/lib/systemd/system
 install -m 0644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/swupd-cleanup.service
