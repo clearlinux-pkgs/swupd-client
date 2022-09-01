@@ -4,3 +4,4 @@ silencewarning.patch
 notelemetry.patch
 nohttpd.patch
 moreinfo.patch
+0001-allow-for-non-versioned-delta-files.patch
