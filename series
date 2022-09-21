@@ -6,3 +6,4 @@ nohttpd.patch
 moreinfo.patch
 0001-allow-for-non-versioned-delta-files.patch
 largestpackprint.patch
+Announce-overrides-of-content-and-version-URLs.patch
