@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 4.2.1
-Release  : 353
+Release  : 354
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source1  : swupd-cleanup.service
@@ -114,7 +114,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1663786969
+export SOURCE_DATE_EPOCH=1663819744
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -127,7 +127,7 @@ export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -fl
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
 --with-versionurl=https://cdn.download.clearlinux.org/update/ \
---with-formatid=30 \
+--with-formatid=31 \
 --with-fallback-capaths=/usr/share/ca-certs/.prebuilt-store/anchors \
 --with-post-update=/usr/bin/update-helper \
 --with-build-number=%{release} \
@@ -170,7 +170,7 @@ VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
 [[ "$VAR" == "30" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1663786969
+export SOURCE_DATE_EPOCH=1663819744
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f
