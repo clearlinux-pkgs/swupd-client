@@ -1,0 +1,6 @@
+formatbump:
+	OLDFMT=$$(grep -oE "with-formatid=[0-9]+" configure | grep -oE "[0-9]+") && \
+	NEWFMT=$$(($$OLDFMT+1)) && \
+	sed -ri "s|(with-formatid=)$${OLDFMT}|\1$${NEWFMT}|" configure && \
+	sed -ri "s|\[\[[^]]*\"\\\$$FMT\"[^]]*==[^]]*]]|[[ \"\$$FMT\" == \"$${NEWFMT}\" ]]|" make_check_command
+	$(MAKE) autospec

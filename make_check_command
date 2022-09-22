@@ -25,5 +25,5 @@ VAR=$(./swupd -v | grep "^version URL" | awk '{ print $3 }')
 VAR=$(./swupd -v | grep "^post-update hook" | awk '{ print $3 }')
 [[ "$VAR" == "/usr/bin/update-helper" ]]
 
-VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
-[[ "$VAR" == "31" ]]
+FMT=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
+[[ "$FMT" == "31" ]]
