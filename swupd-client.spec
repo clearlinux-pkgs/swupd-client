@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 4.2.1
-Release  : 355
+Release  : 356
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source1  : swupd-cleanup.service
@@ -127,7 +127,7 @@ export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -fl
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
 --with-versionurl=https://cdn.download.clearlinux.org/update/ \
---with-formatid=30 \
+--with-formatid=31 \
 --with-fallback-capaths=/usr/share/ca-certs/.prebuilt-store/anchors \
 --with-post-update=/usr/bin/update-helper \
 --with-build-number=%{release} \
@@ -167,7 +167,7 @@ VAR=$(./swupd -v | grep "^post-update hook" | awk '{ print $3 }')
 [[ "$VAR" == "/usr/bin/update-helper" ]]
 
 VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
-[[ "$VAR" == "30" ]]
+[[ "$VAR" == "31" ]]
 
 %install
 export SOURCE_DATE_EPOCH=1663820981
