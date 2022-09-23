@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 4.2.1
-Release  : 356
+Release  : 357
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source1  : swupd-cleanup.service
@@ -114,7 +114,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1663820981
+export SOURCE_DATE_EPOCH=1663949502
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -170,7 +170,7 @@ VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
 [[ "$VAR" == "31" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1663820981
+export SOURCE_DATE_EPOCH=1663949502
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f
