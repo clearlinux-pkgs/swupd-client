@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 4.2.1
-Release  : 357
+Release  : 358
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v4.2.1/swupd-client-4.2.1.tar.gz
 Source1  : swupd-cleanup.service
@@ -28,6 +28,9 @@ BuildRequires : pkgconfig(liblzma)
 BuildRequires : pkgconfig(zlib)
 BuildRequires : pypi-docutils
 BuildRequires : systemd-dev
+# Suppress stripping binaries
+%define __strip /bin/true
+%define debug_package %{nil}
 Patch1: 0001-Add-polkit-files.patch
 Patch2: 0001-Fixed-typo-in-man-page.patch
 Patch3: silencewarning.patch
@@ -35,8 +38,8 @@ Patch4: notelemetry.patch
 Patch5: nohttpd.patch
 Patch6: moreinfo.patch
 Patch7: 0001-allow-for-non-versioned-delta-files.patch
-Patch8: largestpackprint.patch
-Patch9: Announce-overrides-of-content-and-version-URLs.patch
+Patch8: Announce-overrides-of-content-and-version-URLs.patch
+Patch9: 0001-Move-packs-to-download-synchronously.patch
 
 %description
 The swupd-client package provides a reference implementation of a software
@@ -114,15 +117,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1663949502
+export SOURCE_DATE_EPOCH=1675362392
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
-export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
-export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
-export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
+export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
+export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
+export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
 %configure --disable-static --disable-tests \
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
@@ -166,14 +169,14 @@ VAR=$(./swupd -v | grep "^version URL" | awk '{ print $3 }')
 VAR=$(./swupd -v | grep "^post-update hook" | awk '{ print $3 }')
 [[ "$VAR" == "/usr/bin/update-helper" ]]
 
-VAR=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
-[[ "$VAR" == "31" ]]
+FMT=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
+[[ "$FMT" == "31" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1663949502
+export SOURCE_DATE_EPOCH=1675362392
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
-cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f
+cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
 %make_install
 mkdir -p %{buildroot}/usr/lib/systemd/system
 install -m 0644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/swupd-cleanup.service
