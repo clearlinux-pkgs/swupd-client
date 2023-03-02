@@ -1,9 +1,5 @@
 0001-Add-polkit-files.patch
-0001-Fixed-typo-in-man-page.patch
+0002-Disable-forcing-http2.patch
 silencewarning.patch
 notelemetry.patch
-nohttpd.patch
 moreinfo.patch
-0001-allow-for-non-versioned-delta-files.patch
-Announce-overrides-of-content-and-version-URLs.patch
-0001-Move-packs-to-download-synchronously.patch

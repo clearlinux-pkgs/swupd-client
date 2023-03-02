@@ -1,0 +1,29 @@
+From 316295f1311a6962147c609271bfd75054b9785c Mon Sep 17 00:00:00 2001
+From: William Douglas <william.douglas@intel.com>
+Date: Thu, 2 Mar 2023 12:57:26 -0800
+Subject: [PATCH] Disable forcing http2
+
+---
+ src/swupd_lib/curl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/swupd_lib/curl.c b/src/swupd_lib/curl.c
+index 8def18f..5498fbb 100644
+--- a/src/swupd_lib/curl.c
++++ b/src/swupd_lib/curl.c
+@@ -757,10 +757,12 @@ CURLcode swupd_curl_set_basic_options(CURL *curl, const char *url, bool fail_on_
+ 		goto exit;
+ 	}
+ 
++#if 0
+ 	curl_ret = curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
+ 	if (curl_ret != CURLE_OK && curl_ret != CURLE_UNSUPPORTED_PROTOCOL) {
+ 		goto exit;
+ 	}
++#endif
+ 
+ 	// TODO: Introduce code back on bug is fixed on curl
+ 	// curl_ret = curl_easy_setopt(curl, CURLOPT_PIPEWAIT, 1);
+-- 
+2.38.1
+
