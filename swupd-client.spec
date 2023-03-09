@@ -4,7 +4,7 @@
 #
 Name     : swupd-client
 Version  : 5.0.2
-Release  : 366
+Release  : 367
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.0.2/swupd-client-5.0.2.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.0.2/swupd-client-5.0.2.tar.gz
 Source1  : swupd-cleanup.service
