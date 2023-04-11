@@ -4,10 +4,10 @@
 # Using build pattern: configure
 #
 Name     : swupd-client
-Version  : 5.0.2
-Release  : 374
-URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.0.2/swupd-client-5.0.2.tar.gz
-Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.0.2/swupd-client-5.0.2.tar.gz
+Version  : 5.0.3
+Release  : 375
+URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.0.3/swupd-client-5.0.3.tar.gz
+Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.0.3/swupd-client-5.0.3.tar.gz
 Source1  : swupd-cleanup.service
 Source2  : swupd-cleanup.timer
 Summary  : No detailed summary available
@@ -19,6 +19,7 @@ Requires: swupd-client-data = %{version}-%{release}
 Requires: swupd-client-license = %{version}-%{release}
 Requires: swupd-client-man = %{version}-%{release}
 Requires: swupd-client-services = %{version}-%{release}
+BuildRequires : buildreq-configure
 BuildRequires : bzip2-dev
 BuildRequires : pkgconfig(bsdiff)
 BuildRequires : pkgconfig(check)
@@ -91,13 +92,15 @@ man components for the swupd-client package.
 %package services
 Summary: services components for the swupd-client package.
 Group: Systemd services
+Requires: systemd
 
 %description services
 services components for the swupd-client package.
 
 
 %prep
-%setup -q -n swupd-client-5.0.2
+%setup -q -n swupd-client-5.0.3
+cd %{_builddir}/swupd-client-5.0.3
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -109,7 +112,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1679338749
+export SOURCE_DATE_EPOCH=1681242461
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -165,7 +168,7 @@ FMT=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
 [[ "$FMT" == "33" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1679338749
+export SOURCE_DATE_EPOCH=1681242461
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
