@@ -26,4 +26,4 @@ VAR=$(./swupd -v | grep "^post-update hook" | awk '{ print $3 }')
 [[ "$VAR" == "/usr/bin/update-helper" ]]
 
 FMT=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
-[[ "$FMT" == "33" ]]
+[[ "$FMT" == "34" ]]
