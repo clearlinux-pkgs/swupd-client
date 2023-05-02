@@ -3,3 +3,4 @@
 silencewarning.patch
 notelemetry.patch
 moreinfo.patch
+log-downloads.patch

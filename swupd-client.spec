@@ -5,7 +5,7 @@
 #
 Name     : swupd-client
 Version  : 5.0.5
-Release  : 378
+Release  : 379
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.0.5/swupd-client-5.0.5.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.0.5/swupd-client-5.0.5.tar.gz
 Source1  : swupd-cleanup.service
@@ -38,6 +38,7 @@ Patch2: 0002-Disable-forcing-http2.patch
 Patch3: silencewarning.patch
 Patch4: notelemetry.patch
 Patch5: moreinfo.patch
+Patch6: log-downloads.patch
 
 %description
 The swupd-client package provides a reference implementation of a software
@@ -106,21 +107,22 @@ cd %{_builddir}/swupd-client-5.0.5
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1682530397
+export SOURCE_DATE_EPOCH=1683066008
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
-export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
-export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
-export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz "
+export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -fno-semantic-interposition -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
 %configure --disable-static --disable-tests \
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
@@ -168,7 +170,7 @@ FMT=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
 [[ "$FMT" == "34" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1682530397
+export SOURCE_DATE_EPOCH=1683066008
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
