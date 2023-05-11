@@ -1,0 +1,78 @@
+diff -purN swupd-client-5.0.5.org/src/swupd.h swupd-client-5.0.5/src/swupd.h
+--- swupd-client-5.0.5.org/src/swupd.h	2023-04-25 21:32:54.000000000 +0000
++++ swupd-client-5.0.5/src/swupd.h	2023-05-11 20:18:50.890077572 +0000
+@@ -54,8 +54,10 @@ extern "C" {
+ #define SSL_CLIENT_CERT "/etc/swupd/client.pem"
+ 
+ #define DEFAULT_VERSION_URL_PATH "/usr/share/defaults/swupd/versionurl"
++#define DEFAULT_MIRROR_VERSION_URL_PATH "/usr/share/defaults/swupd/mirror_versionurl"
+ #define MIRROR_VERSION_URL_PATH "/etc/swupd/mirror_versionurl"
+ #define DEFAULT_CONTENT_URL_PATH "/usr/share/defaults/swupd/contenturl"
++#define DEFAULT_MIRROR_CONTENT_URL_PATH "/usr/share/defaults/swupd/mirror_contenturl"
+ #define MIRROR_CONTENT_URL_PATH "/etc/swupd/mirror_contenturl"
+ #define DEFAULT_FORMAT_PATH "/usr/share/defaults/swupd/format"
+ 
+diff -purN swupd-client-5.0.5.org/src/swupd_lib/globals.c swupd-client-5.0.5/src/swupd_lib/globals.c
+--- swupd-client-5.0.5.org/src/swupd_lib/globals.c	2023-04-25 21:33:02.000000000 +0000
++++ swupd-client-5.0.5/src/swupd_lib/globals.c	2023-05-11 20:20:59.313316855 +0000
+@@ -55,6 +55,8 @@ struct globals globals = {
+ 	.opt_level_mask = 0,
+ };
+ 
++int no_mirror = 0;
++
+ struct globals_bkp globals_bkp;
+ 
+ /* NOTE: Today the content and version server urls are the same in
+@@ -106,6 +108,14 @@ static bool set_default_content_url(void
+ 	}
+ 
+ 	// Look for config file in /usr/share inside path_prefix
++	if (!no_mirror) {
++		ret = get_value_from_path(&new_content_url, DEFAULT_MIRROR_CONTENT_URL_PATH, false);
++		if (ret == 0) {
++			goto found;
++		}
++	}
++
++	// Look for config file in /usr/share inside path_prefix
+ 	ret = get_value_from_path(&new_content_url, DEFAULT_CONTENT_URL_PATH, false);
+ 	if (ret == 0) {
+ 		goto found;
+@@ -156,6 +166,14 @@ static bool set_default_version_url(void
+ 	}
+ 
+ 	// Look for config file in /usr/share inside path_prefix
++	if (!no_mirror) {
++		ret = get_value_from_path(&new_version_url, DEFAULT_MIRROR_VERSION_URL_PATH, false);
++		if (ret == 0) {
++			goto found;
++		}
++	}
++
++	// Look for config file in /usr/share inside path_prefix
+ 	ret = get_value_from_path(&new_version_url, DEFAULT_VERSION_URL_PATH, false);
+ 	if (ret == 0) {
+ 		goto found;
+diff -purN swupd-client-5.0.5.org/src/swupd_lib/mirror.c swupd-client-5.0.5/src/swupd_lib/mirror.c
+--- swupd-client-5.0.5.org/src/swupd_lib/mirror.c	2022-05-02 20:40:51.000000000 +0000
++++ swupd-client-5.0.5/src/swupd_lib/mirror.c	2023-05-11 20:21:47.329029998 +0000
+@@ -32,6 +32,8 @@ static bool set = false;
+ static bool unset = false;
+ const char *set_url = NULL;
+ 
++extern int no_mirror;
++
+ static void print_help(void)
+ {
+ 	print("Configures a mirror URL for swupd to use instead of the defaults on the system\n\n");
+@@ -332,6 +334,9 @@ int handle_mirror_if_stale(void)
+ 	}
+ 
+ 	/* if we've made it this far we need to unset */
++
++	no_mirror = 1;
++
+ 	if (mirror_version < 0) {
+ 		warn("the mirror version could not be determined\n");
+ 	} else {

@@ -12,3 +12,5 @@ mkdir -p %{buildroot}/usr/share/polkit-1/actions
 mkdir -p %{buildroot}/usr/share/polkit-1/rules.d
 install -m644 data/org.clearlinux.swupd.policy %{buildroot}/usr/share/polkit-1/actions/
 install -m644 data/org.clearlinux.swupd.rules %{buildroot}/usr/share/polkit-1/rules.d/
+echo "https://clearlinux-distro-public.s3.us-west-2.amazonaws.com/update/" > %{buildroot}/usr/share/defaults/swupd/mirror_versionurl
+echo "https://clearlinux-distro-public.s3.us-west-2.amazonaws.com/update/" > %{buildroot}/usr/share/defaults/swupd/mirror_contenturl

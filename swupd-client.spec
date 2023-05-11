@@ -5,7 +5,7 @@
 #
 Name     : swupd-client
 Version  : 5.0.5
-Release  : 379
+Release  : 380
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.0.5/swupd-client-5.0.5.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.0.5/swupd-client-5.0.5.tar.gz
 Source1  : swupd-cleanup.service
@@ -39,6 +39,7 @@ Patch3: silencewarning.patch
 Patch4: notelemetry.patch
 Patch5: moreinfo.patch
 Patch6: log-downloads.patch
+Patch7: 0001-add-mirror-conf-file.patch
 
 %description
 The swupd-client package provides a reference implementation of a software
@@ -108,13 +109,17 @@ cd %{_builddir}/swupd-client-5.0.5
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+pushd ..
+cp -a swupd-client-5.0.5 buildavx2
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1683066008
+export SOURCE_DATE_EPOCH=1683837193
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -134,6 +139,24 @@ export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -fdebug-types-section
 --enable-third-party
 make  %{?_smp_mflags}
 
+unset PKG_CONFIG_PATH
+pushd ../buildavx2/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
+%configure --disable-static --disable-tests \
+--enable-signature-verification \
+--with-contenturl=https://cdn.download.clearlinux.org/update/ \
+--with-versionurl=https://cdn.download.clearlinux.org/update/ \
+--with-formatid=34 \
+--with-fallback-capaths=/usr/share/ca-certs/.prebuilt-store/anchors \
+--with-post-update=/usr/bin/update-helper \
+--with-build-number=%{release} \
+--enable-third-party
+make  %{?_smp_mflags}
+popd
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
@@ -170,10 +193,13 @@ FMT=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
 [[ "$FMT" == "34" ]]
 
 %install
-export SOURCE_DATE_EPOCH=1683066008
+export SOURCE_DATE_EPOCH=1683837193
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
+pushd ../buildavx2/
+%make_install_v3
+popd
 %make_install
 mkdir -p %{buildroot}/usr/lib/systemd/system
 install -m 0644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/swupd-cleanup.service
@@ -197,7 +223,10 @@ mkdir -p %{buildroot}/usr/share/polkit-1/actions
 mkdir -p %{buildroot}/usr/share/polkit-1/rules.d
 install -m644 data/org.clearlinux.swupd.policy %{buildroot}/usr/share/polkit-1/actions/
 install -m644 data/org.clearlinux.swupd.rules %{buildroot}/usr/share/polkit-1/rules.d/
+echo "https://clearlinux-distro-public.s3.us-west-2.amazonaws.com/update/" > %{buildroot}/usr/share/defaults/swupd/mirror_versionurl
+echo "https://clearlinux-distro-public.s3.us-west-2.amazonaws.com/update/" > %{buildroot}/usr/share/defaults/swupd/mirror_contenturl
 ## install_append end
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -209,6 +238,8 @@ install -m644 data/org.clearlinux.swupd.rules %{buildroot}/usr/share/polkit-1/ru
 
 %files bin
 %defattr(-,root,root,-)
+/V3/usr/bin/swupd
+/V3/usr/bin/verifytime
 /usr/bin/swupd
 /usr/bin/verifytime
 
@@ -216,6 +247,8 @@ install -m644 data/org.clearlinux.swupd.rules %{buildroot}/usr/share/polkit-1/ru
 %defattr(-,root,root,-)
 /usr/share/defaults/etc/profile.d/50-swupd.bash
 /usr/share/defaults/swupd/config
+/usr/share/defaults/swupd/mirror_contenturl
+/usr/share/defaults/swupd/mirror_versionurl
 /usr/share/polkit-1/actions/org.clearlinux.swupd.policy
 /usr/share/polkit-1/rules.d/org.clearlinux.swupd.rules
 /usr/share/zsh/site-functions/_swupd
