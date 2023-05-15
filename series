@@ -4,4 +4,4 @@ silencewarning.patch
 notelemetry.patch
 moreinfo.patch
 log-downloads.patch
-0001-add-mirror-conf-file.patch
+#0001-add-mirror-conf-file.patch
