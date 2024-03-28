@@ -1,0 +1,65 @@
+From f758099764152cc22e4ea8e077d2ec88c39fc04e Mon Sep 17 00:00:00 2001
+From: William Douglas <william.douglas@intel.com>
+Date: Thu, 28 Mar 2024 07:46:11 -0700
+Subject: [PATCH] Add set of directories that Clear Linux won't update
+
+In response to a change removing /root, add a directory set that
+swupd-client will never modify.
+
+Signed-off-by: William Douglas <william.douglas@intel.com>
+---
+ src/swupd_lib/heuristics.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/src/swupd_lib/heuristics.c b/src/swupd_lib/heuristics.c
+index 4c0f914f..40ae0bd8 100644
+--- a/src/swupd_lib/heuristics.c
++++ b/src/swupd_lib/heuristics.c
+@@ -82,6 +82,11 @@ static void apply_src_state(struct file *f)
+ 	f->is_state = 1;
+ }
+ 
++static void apply_no_update(struct file *f)
++{
++	f->do_not_update = 1;
++}
++
+ static int h_starts_with(const char *s1, const char *s2)
+ {
+ 	return str_starts_with(s1, s2);
+@@ -93,6 +98,32 @@ static int h_strcmp(const char *s1, const char *s2)
+ }
+ 
+ static const struct rule heuristic_rules[] = {
++	// Clear Linux directories that we never change
++	{ "/autofs", h_strcmp, apply_no_update, false },
++	{ "/boot", h_strcmp, apply_no_update, false },
++	{ "/dev", h_strcmp, apply_no_update, false },
++	{ "/etc", h_strcmp, apply_no_update, false },
++	{ "/home", h_strcmp, apply_no_update, false },
++	{ "/media", h_strcmp, apply_no_update, false },
++	{ "/mnt", h_strcmp, apply_no_update, false },
++	{ "/proc", h_strcmp, apply_no_update, false },
++	{ "/root", h_strcmp, apply_no_update, false },
++	{ "/run", h_strcmp, apply_no_update, false },
++	{ "/run/lock", h_strcmp, apply_no_update, false },
++	{ "/srv", h_strcmp, apply_no_update, false },
++	{ "/sys", h_strcmp, apply_no_update, false },
++	{ "/tmp", h_strcmp, apply_no_update, false },
++	{ "/usr", h_strcmp, apply_no_update, false },
++	{ "/usr/bin", h_strcmp, apply_no_update, false },
++	{ "/usr/lib", h_strcmp, apply_no_update, false },
++	{ "/usr/lib64", h_strcmp, apply_no_update, false },
++	{ "/var", h_strcmp, apply_no_update, false },
++	{ "/var/cache", h_strcmp, apply_no_update, false },
++	{ "/var/lib", h_strcmp, apply_no_update, false },
++	{ "/var/log", h_strcmp, apply_no_update, false },
++	{ "/var/spool", h_strcmp, apply_no_update, false },
++	{ "/var/tmp", h_strcmp, apply_no_update, false },
++
+ 	// Boot Files
+ 	{ "/boot/", h_starts_with, apply_boot, false },
+ 	{ "/usr/lib/modules/", h_starts_with, apply_boot, false },
+-- 
+2.44.0
+
