@@ -7,7 +7,7 @@
 #
 Name     : swupd-client
 Version  : 5.1.0
-Release  : 386
+Release  : 387
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.1.0/swupd-client-5.1.0.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.1.0/swupd-client-5.1.0.tar.gz
 Source1  : swupd-cleanup.service
@@ -44,6 +44,7 @@ Patch5: moreinfo.patch
 Patch6: log-downloads.patch
 Patch7: 0001-Add-set-of-directories-that-Clear-Linux-won-t-update.patch
 Patch8: 0001-Push-out-update-checks-to-24-hours.patch
+Patch9: backport-Rework-how-curl-errors-are-checked.patch
 
 %description
 The swupd-client package provides a reference implementation of a software
@@ -115,6 +116,7 @@ cd %{_builddir}/swupd-client-5.1.0
 %patch -P 6 -p1
 %patch -P 7 -p1
 %patch -P 8 -p1
+%patch -P 9 -p1
 pushd ..
 cp -a swupd-client-5.1.0 buildavx2
 popd
@@ -124,7 +126,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1711992714
+export SOURCE_DATE_EPOCH=1712254110
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -220,7 +222,7 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1711992714
+export SOURCE_DATE_EPOCH=1712254110
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
