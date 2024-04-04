@@ -7,7 +7,7 @@
 #
 Name     : swupd-client
 Version  : 5.1.0
-Release  : 387
+Release  : 388
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.1.0/swupd-client-5.1.0.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.1.0/swupd-client-5.1.0.tar.gz
 Source1  : swupd-cleanup.service
@@ -126,7 +126,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1712254110
+export SOURCE_DATE_EPOCH=1712257057
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -222,7 +222,7 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1712254110
+export SOURCE_DATE_EPOCH=1712257057
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
