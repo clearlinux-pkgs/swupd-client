@@ -1,0 +1,135 @@
+From 2ac8179b662157c551b542b19eab7e7ee4fde310 Mon Sep 17 00:00:00 2001
+From: William Douglas <william.douglas@intel.com>
+Date: Fri, 1 Mar 2024 13:16:09 -0800
+Subject: [PATCH] Add option for os-install to specify arch
+
+Enable passing an arch field that takes the decimal representation of
+the optimization level (SSE, AVX2, AVX512 and APX currently). This
+will override the default of SSE for os-install to a given non-root
+path.
+
+This isn't intended for general use so do not add details of its usage
+to help. The handling/option may change in the future as well so this
+is to be treated as unstable.
+
+Signed-off-by: William Douglas <william.douglas@intel.com>
+---
+ src/cmds/os_install.c           | 28 ++++++++++++++++++++++++++++
+ src/swupd_lib/globals.c         |  1 +
+ src/swupd_lib/globals.h         |  1 +
+ src/swupd_lib/manifest_parser.c | 10 ++++++++--
+ 4 files changed, 38 insertions(+), 2 deletions(-)
+
+diff --git a/src/cmds/os_install.c b/src/cmds/os_install.c
+index 1dcee6b7..c83efc43 100644
+--- a/src/cmds/os_install.c
++++ b/src/cmds/os_install.c
+@@ -22,9 +22,11 @@
+ #define INCLUDE_ALL_STATE_DIRS true
+ #define FLAG_DOWNLOAD_ONLY 2000
+ #define FLAG_SKIP_OPTIONAL 2001
++#define FLAG_ARCH 2002
+ 
+ static bool cmdline_option_download = false;
+ static bool cmdline_option_force = false;
++static unsigned int cmdline_option_arch = SSE;
+ static bool cmdline_option_skip_optional = false;
+ static struct list *cmdline_bundles = NULL;
+ static char *path;
+@@ -38,6 +40,7 @@ static const struct option prog_opts[] = {
+ 	{ "statedir-cache", required_argument, 0, 's' },
+ 	{ "download", no_argument, 0, FLAG_DOWNLOAD_ONLY },
+ 	{ "skip-optional", no_argument, 0, FLAG_SKIP_OPTIONAL },
++	{ "arch", required_argument, 0, FLAG_ARCH },
+ };
+ 
+ static void print_help(void)
+@@ -106,6 +109,31 @@ static bool parse_opt(int opt, char *optarg)
+ 	case FLAG_SKIP_OPTIONAL:
+ 		cmdline_option_skip_optional = optarg_to_bool(optarg);
+ 		return true;
++	case FLAG_ARCH:
++		err = str_to_uint(optarg, &cmdline_option_arch);
++		if (err < 0) {
++			error("Invalid --arch argument: %s\n\n", optarg);
++			return false;
++		}
++		switch (cmdline_option_arch) {
++		case SSE:
++			globals.opt_level_mask = (SSE << 8) | SSE;
++			break;
++		case AVX2:
++			globals.opt_level_mask = (AVX2 << 8) | AVX2 | SSE;
++			break;
++		case AVX512:
++			globals.opt_level_mask = (AVX512 << 8) | AVX512 | AVX2 | SSE;
++			break;
++		case APX:
++			globals.opt_level_mask = (APX << 8) | APX | AVX2 | SSE;
++			break;
++		default:
++			error("Invalid --arch argument: %s\n\n", optarg);
++			return false;
++		}
++		globals.force_opt_level_mask = true;
++		return true;
+ 	default:
+ 		return false;
+ 	}
+diff --git a/src/swupd_lib/globals.c b/src/swupd_lib/globals.c
+index 2a7b7195..3bdeed0c 100644
+--- a/src/swupd_lib/globals.c
++++ b/src/swupd_lib/globals.c
+@@ -53,6 +53,7 @@ struct globals globals = {
+ 	.retry_delay = DEFAULT_RETRY_DELAY,
+ 	.update_server_port = -1,
+ 	.opt_level_mask = 0,
++	.force_opt_level_mask = false,
+ };
+ 
+ struct globals_bkp globals_bkp;
+diff --git a/src/swupd_lib/globals.h b/src/swupd_lib/globals.h
+index ef6c8d9a..3fb8f4d0 100644
+--- a/src/swupd_lib/globals.h
++++ b/src/swupd_lib/globals.h
+@@ -33,6 +33,7 @@ enum user_interaction {
+ extern struct globals {
+ 	bool allow_insecure_http;
+ 	bool content_url_is_local;
++	bool force_opt_level_mask;
+ 	bool need_systemd_reexec;
+ 	bool need_update_bootmanager;
+ 	bool no_boot_update;
+diff --git a/src/swupd_lib/manifest_parser.c b/src/swupd_lib/manifest_parser.c
+index da0733a4..6c4f2de7 100644
+--- a/src/swupd_lib/manifest_parser.c
++++ b/src/swupd_lib/manifest_parser.c
+@@ -112,6 +112,11 @@ uint64_t get_opt_level_mask(void)
+ 	char *avx512_skip_file = NULL;
+ 	uint64_t opt_level_mask = 0;
+ 
++	if (globals.force_opt_level_mask) {
++		/* The optimization level was given to us, don't change it. */
++		return globals.opt_level_mask;
++	}
++
+ 	avx2_skip_file = sys_path_join("%s/%s", globals.path_prefix, AVX2_SKIP_FILE);
+ 	avx512_skip_file = sys_path_join("%s/%s", globals.path_prefix, AVX512_SKIP_FILE);
+ 
+@@ -386,10 +391,11 @@ struct manifest *manifest_parse(const char *component, const char *filename, boo
+ 			continue;
+ 		}
+ 		file_mask = LOOKUP_OPTIMIZED_BITMASKS[bitmask_translation];
+-		if (str_cmp("/", globals.path_prefix) != 0) {
++		if ((str_cmp("/", globals.path_prefix) != 0) && !globals.force_opt_level_mask) {
+ 			/* Don't use optimized binaries when prefix is set */
+ 			/* as the operation might not be for the host system */
+-			/* so default to SSE for this case. */
++			/* so default to SSE for this case (unless override */
++			/* is set). */
+ 			globals.opt_level_mask = (SSE << 8) | SSE;
+ 		}
+ 		if (!use_file(file_mask, globals.opt_level_mask)) {
+-- 
+2.43.0
+
