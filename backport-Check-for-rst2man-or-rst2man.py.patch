@@ -1,0 +1,38 @@
+From abb3f2b4f1d60aaeed0bce2259984b35eeb48820 Mon Sep 17 00:00:00 2001
+From: "Brett T. Warden" <brett.t.warden@intel.com>
+Date: Fri, 26 Jul 2024 11:47:13 -0700
+Subject: [PATCH] Check for rst2man or rst2man.py
+
+---
+ Makefile.am  | 2 +-
+ configure.ac | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 67b3deb0..f4e16712 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -268,7 +268,7 @@ man: $(dist_man_MANS)
+ 
+ .rst:
+ 	mkdir -p "$$(dirname $@)"
+-	rst2man.py "$<" > "$@.tmp" && mv -f "$@.tmp" "$@"
++	$(RST2MAN) "$<" > "$@.tmp" && mv -f "$@.tmp" "$@"
+ 
+ if ENABLE_TESTS
+ 
+diff --git a/configure.ac b/configure.ac
+index 53b172c4..fd7b8425 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -26,6 +26,7 @@ AC_CHECK_LIB([pthread], [pthread_create])
+ 
+ 
+ # Program checks
++AC_CHECK_PROGS(RST2MAN, rst2man rst2man.py)
+ AC_CHECK_PROGS(TAR, tar)
+ AC_DEFINE(_GNU_SOURCE, 1, [Use non standard gnu functions])
+ 
+-- 
+2.45.1
+

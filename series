@@ -9,3 +9,4 @@ log-downloads.patch
 0001-Push-out-update-checks-to-24-hours.patch
 backport-Rework-how-curl-errors-are-checked.patch
 0001-Add-option-for-os-install-to-specify-arch.patch
+backport-Check-for-rst2man-or-rst2man.py.patch
