@@ -1,0 +1,46 @@
+From 8742b3a168a012c619be106402a5df851acc5fd6 Mon Sep 17 00:00:00 2001
+From: "Brett T. Warden" <brett.t.warden@intel.com>
+Date: Mon, 26 Aug 2024 10:04:41 -0700
+Subject: [PATCH] Redirect URL override messages to STDERR
+
+Previously, these messages were printed to STDOUT:
+Overriding version and content URLs with...
+Overriding content URL with...
+Overriding version URL with...
+
+But especially with --quiet, the output to STDOUT should be strictly the
+requested data. So print these as warnings instead.
+---
+ src/swupd_lib/globals.c                                |  6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/swupd_lib/globals.c b/src/swupd_lib/globals.c
+index 2a7b719569f5..2db63510730a 100644
+--- a/src/swupd_lib/globals.c
++++ b/src/swupd_lib/globals.c
+@@ -551,7 +551,7 @@ static bool global_parse_opt(int opt, char *optarg)
+ 		}
+ 		return true;
+ 	case 'u':
+-		print("Overriding version and content URLs with %s\n", optarg);
++		warn("Overriding version and content URLs with %s\n", optarg);
+ 		set_version_url(optarg);
+ 		set_content_url(optarg);
+ 		return true;
+@@ -563,11 +563,11 @@ static bool global_parse_opt(int opt, char *optarg)
+ 		}
+ 		return true;
+ 	case 'c':
+-		print("Overriding content URL with %s\n", optarg);
++		warn("Overriding content URL with %s\n", optarg);
+ 		set_content_url(optarg);
+ 		return true;
+ 	case 'v':
+-		print("Overriding version URL with %s\n", optarg);
++		warn("Overriding version URL with %s\n", optarg);
+ 		set_version_url(optarg);
+ 		return true;
+ 	case 'F':
+-- 
+2.46.0
+
