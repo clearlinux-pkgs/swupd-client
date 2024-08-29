@@ -6,10 +6,10 @@
 # autospec commit: a064a7f
 #
 Name     : swupd-client
-Version  : 5.1.1
-Release  : 396
-URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.1.1/swupd-client-5.1.1.tar.gz
-Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.1.1/swupd-client-5.1.1.tar.gz
+Version  : 5.2.0
+Release  : 397
+URL      : https://github.com/clearlinux/swupd-client/releases/download/v5.2.0/swupd-client-5.2.0.tar.gz
+Source0  : https://github.com/clearlinux/swupd-client/releases/download/v5.2.0/swupd-client-5.2.0.tar.gz
 Source1  : swupd-cleanup.service
 Source2  : swupd-cleanup.timer
 Summary  : No detailed summary available
@@ -106,8 +106,8 @@ services components for the swupd-client package.
 
 
 %prep
-%setup -q -n swupd-client-5.1.1
-cd %{_builddir}/swupd-client-5.1.1
+%setup -q -n swupd-client-5.2.0
+cd %{_builddir}/swupd-client-5.2.0
 %patch -P 1 -p1
 %patch -P 2 -p1
 %patch -P 3 -p1
@@ -118,7 +118,7 @@ cd %{_builddir}/swupd-client-5.1.1
 %patch -P 8 -p1
 %patch -P 9 -p1
 pushd ..
-cp -a swupd-client-5.1.1 buildavx2
+cp -a swupd-client-5.2.0 buildavx2
 popd
 
 %build
@@ -126,7 +126,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1724782106
+export SOURCE_DATE_EPOCH=1724958816
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -142,7 +142,7 @@ FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
 export GOAMD64=v2
-%reconfigure --disable-static --disable-tests \
+%configure --disable-static --disable-tests \
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
 --with-versionurl=https://cdn.download.clearlinux.org/update/ \
@@ -152,6 +152,7 @@ export GOAMD64=v2
 --with-build-number=%{release} \
 --enable-third-party
 make  %{?_smp_mflags}
+
 unset PKG_CONFIG_PATH
 pushd ../buildavx2/
 GOAMD64=v3
@@ -160,7 +161,7 @@ CXXFLAGS="$CLEAR_INTERMEDIATE_CXXFLAGS -march=x86-64-v3 -Wl,-z,x86-64-v3 "
 FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS -march=x86-64-v3 -Wl,-z,x86-64-v3 "
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS -march=x86-64-v3 "
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS -march=x86-64-v3 "
-%reconfigure --disable-static --disable-tests \
+%configure --disable-static --disable-tests \
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
 --with-versionurl=https://cdn.download.clearlinux.org/update/ \
@@ -171,7 +172,6 @@ LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS -march=x86-64-v3 "
 --enable-third-party
 make  %{?_smp_mflags}
 popd
-
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
@@ -222,7 +222,7 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1724782106
+export SOURCE_DATE_EPOCH=1724958816
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
