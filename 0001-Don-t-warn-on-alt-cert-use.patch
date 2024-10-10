@@ -1,0 +1,27 @@
+From 6b14ef8e81ff22876eba029385c2fba8dae79bf2 Mon Sep 17 00:00:00 2001
+From: William Douglas <william.douglas@intel.com>
+Date: Thu, 10 Oct 2024 14:53:06 -0700
+Subject: [PATCH] Don't warn on alt cert use
+
+This is an intended workflow that shouldn't be remarked on.
+
+Signed-off-by: William Douglas <william.douglas@intel.com>
+---
+ src/swupd_lib/signature.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/swupd_lib/signature.c b/src/swupd_lib/signature.c
+index 7285025..9cdeb0e 100644
+--- a/src/swupd_lib/signature.c
++++ b/src/swupd_lib/signature.c
+@@ -300,7 +300,6 @@ static bool use_alt_cert(void)
+ 		orig_cert = strdup_or_die(globals.cert_path);
+ 		string_or_die(&alt_cert, "%s.alt", globals.cert_path);
+ 		if (sys_file_exists(alt_cert)) {
+-			warn("Default cert failed, attempting to use alternative: %s\n", alt_cert);
+ 			ret = swap_certs();
+ 		} else {
+ 			FREE(alt_cert);
+-- 
+2.46.2
+

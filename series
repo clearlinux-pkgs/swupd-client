@@ -8,3 +8,4 @@ log-downloads.patch
 0001-Add-set-of-directories-that-Clear-Linux-won-t-update.patch
 0001-Push-out-update-checks-to-24-hours.patch
 0001-Add-option-for-os-install-to-specify-arch.patch
+0001-Don-t-warn-on-alt-cert-use.patch
