@@ -7,7 +7,7 @@
 #
 Name     : swupd-client
 Version  : 7.0.0
-Release  : 404
+Release  : 406
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v7.0.0/swupd-client-7.0.0.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v7.0.0/swupd-client-7.0.0.tar.gz
 Source1  : swupd-cleanup.service
