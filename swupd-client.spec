@@ -7,7 +7,7 @@
 #
 Name     : swupd-client
 Version  : 7.0.0
-Release  : 407
+Release  : 408
 URL      : https://github.com/clearlinux/swupd-client/releases/download/v7.0.0/swupd-client-7.0.0.tar.gz
 Source0  : https://github.com/clearlinux/swupd-client/releases/download/v7.0.0/swupd-client-7.0.0.tar.gz
 Source1  : swupd-cleanup.service
@@ -128,7 +128,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1746485565
+export SOURCE_DATE_EPOCH=1746549261
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -148,7 +148,7 @@ export GOAMD64=v2
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
 --with-versionurl=https://cdn.download.clearlinux.org/update/ \
---with-formatid=41 \
+--with-formatid=42 \
 --with-fallback-capaths=/usr/share/ca-certs/.prebuilt-store/anchors \
 --with-post-update=/usr/bin/update-helper \
 --with-build-number=%{release} \
@@ -167,7 +167,7 @@ LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS -march=x86-64-v3 "
 --enable-signature-verification \
 --with-contenturl=https://cdn.download.clearlinux.org/update/ \
 --with-versionurl=https://cdn.download.clearlinux.org/update/ \
---with-formatid=41 \
+--with-formatid=42 \
 --with-fallback-capaths=/usr/share/ca-certs/.prebuilt-store/anchors \
 --with-post-update=/usr/bin/update-helper \
 --with-build-number=%{release} \
@@ -207,7 +207,7 @@ VAR=$(./swupd -v | grep "^post-update hook" | awk '{ print $3 }')
 [[ "$VAR" == "/usr/bin/update-helper" ]]
 
 FMT=$(./swupd -v | grep "format ID" | awk '{ print $3 }')
-[[ "$FMT" == "41" ]]
+[[ "$FMT" == "42" ]]
 
 %install
 export GCC_IGNORE_WERROR=1
@@ -224,7 +224,7 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1746485565
+export SOURCE_DATE_EPOCH=1746549261
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/swupd-client
 cp %{_builddir}/swupd-client-%{version}/COPYING %{buildroot}/usr/share/package-licenses/swupd-client/f5b8c6b890f2c7664954577396afb1fed9aa550f || :
